@@ -39,17 +39,19 @@ const Header = () => {
               <DropdownMenuLabel>Categories</DropdownMenuLabel>
               <DropdownMenuSeparator />
               {categoryList.map((category, index) => (
-                <DropdownMenuItem key={category.attributes?.name}>
+                <DropdownMenuItem
+                  key={category.attributes?.name}
+                  className="flex gap-4 items-center cursor-pointer">
                   {category?.attributes?.icon?.data[0]?.attributes?.url && ( // Add conditional rendering
                     <Image
                       src={category?.attributes?.icon?.data[0]?.attributes?.url}
                       alt="icon"
-                      width={20}
-                      height={20}
+                      width={30}
+                      height={30}
                       unoptimized={true}
                     />
                   )}
-                  <h2 className="ml-2">{category?.attributes?.name}</h2>
+                  <h2 className="text-lg">{category?.attributes?.name}</h2>
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>

@@ -15,10 +15,13 @@ const getCategoryList = () =>
 
 const getAllProducts = () =>
   axiosClient.get("/products?populate=*").then((resp) => resp.data.data);
+const getFooterBanner = () =>
+  axiosClient.get("/footer-banners?populate=*").then((resp) => resp.data.data);
 
 export default {
   getCategory,
   getSliders,
   getCategoryList,
   getAllProducts,
+  getFooterBanner,
 };

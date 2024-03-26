@@ -18,10 +18,16 @@ const getAllProducts = () =>
 const getFooterBanner = () =>
   axiosClient.get("/footer-banners?populate=*").then((resp) => resp.data.data);
 
+const getProductsByCategory = (category) =>
+  axiosClient
+    .get("/products?filters[categories][name][$in]=" + category + "&populate=*")
+    .then((resp) => resp.data.data);
+
 export default {
   getCategory,
   getSliders,
   getCategoryList,
   getAllProducts,
   getFooterBanner,
+  getProductsByCategory,
 };

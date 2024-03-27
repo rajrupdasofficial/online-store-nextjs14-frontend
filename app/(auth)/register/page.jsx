@@ -1,21 +1,42 @@
 "use client";
+//import statement
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import Link from "next/link";
-import { useFormState } from "react-dom";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { register } from "@/lib/register";
+import { useEffect, useState } from "react";
 import GlobalApi from "@/utils/GlobalApi";
-const RegisterPage = () => {
-  const [state, formAction] = useFormState(register, undefined);
+import { toast } from "sonner";
 
-  console.log(state);
-  // const router = useRouter();
-  // // useEffect(() => {
-  // //   state?.success && router.push("/signin");
-  // // }, [state?.success, router]);
+//logics
+const RegisterPage = () => {
+  const [username, setUsername] = useState();
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
+  const router = useRouter();
+  const onCreateAccount = () => {
+    GlobalApi.registerUser(username, email, password).then(
+      (resp) => {
+        sessionStorage.setItem("intercom_user", JSON.stringify(resp.data.user));
+        sessionStorage.setItem("intercom_auth", resp.data.jwt);
+        localStorage.setItem("intercom_auth", resp.data.jwt);
+        toast("Account created successfully");
+        router.push("/signin");
+      },
+      (e) => {
+        toast("error while creating account");
+      }
+    );
+  };
+
+  useEffect(() => {
+    const intercom_auth = sessionStorage.getItem("intercom_auth");
+    if (intercom_auth) {
+      router.push("/");
+    }
+  }, [router]);
+
   return (
     <div className="flex items-baseline justify-center my-10">
       <div className="flex flex-col items-center justify-center p-10 bg-slate-100 border border-slate-200">
@@ -23,19 +44,36 @@ const RegisterPage = () => {
         <h2 className="font-bold text-3xl">Create account</h2>
         <h2>Enter your email and password to create your account</h2>
         <div>
-          <form action={formAction} className="flex flex-col w-full mt-7 gap-7">
-            <Input placeholder="username" name="username" type="text" />
-            <Input placeholder="name@example.com" name="email" type="email" />
-            <Input placeholder="password" name="password" type="password" />
-            <Button>Create an Account</Button>
-            {/* <span>{state?.error}</span> */}
+          <div className="flex flex-col w-full mt-7 gap-7">
+            <Input
+              placeholder="username"
+              name="username"
+              type="text"
+              onChange={(e) => setUsername(e.target.value)}
+            />
+            <Input
+              placeholder="name@example.com"
+              name="email"
+              type="email"
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <Input
+              placeholder="password"
+              name="password"
+              type="password"
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <Button disabled={!password} onClick={() => onCreateAccount()}>
+              Create an Account
+            </Button>
+
             <p>
               Already have an account
               <Link href={"/signin"} className="text-blue-500">
-                click here to signin
+                &nbsp; click here to signin
               </Link>
             </p>
-          </form>
+          </div>
         </div>
       </div>
     </div>

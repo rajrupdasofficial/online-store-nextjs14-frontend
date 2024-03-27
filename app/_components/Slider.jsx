@@ -17,8 +17,8 @@ const Slider = ({ SliderList }) => {
               src={slider.attributes?.image?.data[0]?.attributes?.url}
               alt="sliderimage"
               width={1000}
-              height={500}
-              className="w-full md:h-[400px] object-cover rounded-2xl h-[200px]"
+              height={800}
+              className="w-full md:h-[400px] object-cover h-[400px]  rounded-2xl"
             />
           </CarouselItem>
         ))}

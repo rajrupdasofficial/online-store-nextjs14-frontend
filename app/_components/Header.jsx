@@ -1,6 +1,7 @@
 "use client";
+// import statements
 import Image from "next/image";
-import { LayoutGrid, Search, ShoppingBag } from "lucide-react";
+import { LayoutGrid, Search, ShoppingBag, CircleUserRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -14,8 +15,11 @@ import GlobalApi from "@/utils/GlobalApi";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { search } from "@/lib/search";
+
+// logics
 const Header = () => {
   const [categoryList, setCategoryList] = useState([]);
+  const isLogin = sessionStorage.getItem("intercom_auth") ? true : false;
   useEffect(() => {
     getCategoryList();
   }, []);
@@ -83,7 +87,25 @@ const Header = () => {
           <h2 className="flex gap-2 items-center text-lg">
             <ShoppingBag />0
           </h2>
-          <Button>Login</Button>
+          {!isLogin ? (
+            <Link href="/signin">
+              <Button>Login</Button>
+            </Link>
+          ) : (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <CircleUserRound className="h-12 w-12 bg-blue-100 text-primary p-2 rounded-full cursor-pointer" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>Profile</DropdownMenuItem>
+                <DropdownMenuItem>Billing</DropdownMenuItem>
+                <DropdownMenuItem>Team</DropdownMenuItem>
+                <DropdownMenuItem>Subscription</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
       </div>
     )

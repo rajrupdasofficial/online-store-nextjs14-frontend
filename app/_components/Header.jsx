@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import GlobalApi from "@/utils/GlobalApi";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { search } from "@/lib/search";
 import { useRouter } from "next/navigation";
@@ -21,13 +21,13 @@ const Header = () => {
   const [categoryList, setCategoryList] = useState([]);
   const [onLogin, setonLogin] = useState(false);
 
-
   const router = useRouter();
   useEffect(() => {
     getCategoryList();
+
     const auth = localStorage.getItem("auth");
     if (auth) {
-      setonLogin(true); // Set onLogin to true if auth token exists
+      setonLogin(true);
     }
   }, []);
   const getCategoryList = () => {
@@ -35,7 +35,7 @@ const Header = () => {
       setCategoryList(resp.data.data);
     });
   };
-  
+
   const onLogOut = () => {
     localStorage.clear();
     router.push("/signin");
@@ -57,7 +57,9 @@ const Header = () => {
             <DropdownMenuLabel>Categories</DropdownMenuLabel>
             <DropdownMenuSeparator />
             {categoryList.map((category, index) => (
-              <Link key={index} href={"/products-category/" + category.attributes.name}>
+              <Link
+                key={index}
+                href={"/products-category/" + category.attributes.name}>
                 <DropdownMenuItem className="flex gap-4 items-center cursor-pointer">
                   {category?.attributes?.icon?.data[0]?.attributes?.url && (
                     <Image
@@ -77,12 +79,16 @@ const Header = () => {
 
         <div className="md:flex gap-3 items-center border rounded-full p-2 px-5 hidden">
           <form action={search}>
-            <input type="text" placeholder="Search" name="search" className="outline-none" />
+            <input
+              type="text"
+              placeholder="Search"
+              name="search"
+              className="outline-none"
+            />
             <button>
               <Search />
             </button>
-            </form>
-          
+          </form>
         </div>
       </div>
       <div className="flex gap-5 items-center">
@@ -96,7 +102,7 @@ const Header = () => {
         ) : (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <CircleUserRound className="bg-blue-100 text-primary h-12 w-12 rounded-full" />
+              <CircleUserRound className="bg-blue-100 text-primary h-7 w-7 rounded-full" />
             </DropdownMenuTrigger>
             <DropdownMenuContent>
               <DropdownMenuLabel>My Account</DropdownMenuLabel>

@@ -5,29 +5,31 @@ import GlobalApi from "@/utils/GlobalApi";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
-
+import { LoaderIcon } from "lucide-react";
 
 const SigninPage = () => {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const router = useRouter();
-
-
+  const [loader, setLoader] = useState();
   useEffect(() => {
-    const intercom_auth = localStorage.getItem("auth")
+    const intercom_auth = localStorage.getItem("auth");
     if (intercom_auth) {
       router.push("/");
     }
   }, [router]);
 
   const onSignIn = () => {
+    setLoader(true);
     GlobalApi.SignIn(email, password).then(
       (resp) => {
         localStorage.setItem("auth", resp.data.jwt);
+        localStorage.setItem("user", JSON.stringify(resp.data.user));
         toast("Welcome back again");
         router.push("/");
+        setLoader(false);
       },
       (e) => {
         toast(e?.response?.data?.error?.message);
@@ -57,7 +59,7 @@ const SigninPage = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
             <Button disabled={!password} onClick={() => onSignIn()}>
-              Sign In
+              {loader ? <LoaderIcon className="animate-spin" /> : "Sign In"}
             </Button>
 
             <p>

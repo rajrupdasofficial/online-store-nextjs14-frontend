@@ -10,6 +10,7 @@ export default async function Home() {
   const categoryList = await GlobalApi.getCategoryList();
   const productList = await GlobalApi.getAllProducts();
   const footerBanner = await GlobalApi.getFooterBanner();
+
   return (
     <div className="p-5 md:p-10 px-16">
       {/* Slider */}

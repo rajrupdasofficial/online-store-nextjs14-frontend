@@ -8,30 +8,33 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import GlobalApi from "@/utils/GlobalApi";
 import { toast } from "sonner";
-
+import { LoaderIcon } from "lucide-react";
 //logics
 const RegisterPage = () => {
   const [username, setUsername] = useState();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const router = useRouter();
-
+  const [loader, setLoader] = useState();
 
   const onCreateAccount = () => {
     GlobalApi.registerUser(username, email, password).then(
       (resp) => {
         localStorage.setItem("auth", resp.data.jwt);
+        localStorage.setItem("user", JSON.stringify(resp.data.user));
         toast("Account created successfully");
         router.push("/signin");
+        setLoader(false);
       },
       (e) => {
         toast(e?.response?.data?.error?.message);
+        setLoader(false);
       }
     );
   };
 
   useEffect(() => {
-    const intercom_auth = sessionStorage.getItem("intercom_auth");
+    const intercom_auth = localStorage.getItem("auth");
     if (intercom_auth) {
       router.push("/");
     }
@@ -64,7 +67,7 @@ const RegisterPage = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
             <Button disabled={!password} onClick={() => onCreateAccount()}>
-              Create an Account
+              {loader ? <LoaderIcon className="animate-spin" /> : "Sign In"}
             </Button>
 
             <p>

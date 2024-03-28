@@ -3,13 +3,44 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { ShoppingBasket } from "lucide-react";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import GlobalApi from "@/utils/GlobalApi";
+import { toast } from "sonner";
 const ProductItemDetail = ({ product }) => {
+  const jwt = localStorage.getItem("auth");
+  const user = JSON.parse(localStorage.getItem("user"));
+  console.log(user.id);
   const [productTotalPrice, setproductTotalPrice] = useState(
     product.attributes.sellingPrice
       ? product.attributes.sellingPrice
       : product.attributes.mrp
   );
+  const router = useRouter();
   const [quantity, setQuantity] = useState(1);
+
+  const addToCart = () => {
+    if (!jwt) {
+      router.push("/");
+      return;
+    }
+    const data = {
+      data: {
+        quantity: quantity,
+        amount: quantity * productTotalPrice.toFixed(2),
+        products: product.id,
+        users_permissions_users: user.id,
+      },
+    };
+    GlobalApi.addToCart(data, jwt).then(
+      (resp) => {
+        console.log(resp.data.data);
+        toast("Added to Cart");
+      },
+      (e) => {
+        toast("Something went wrong at backend try later");
+      }
+    );
+  };
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 p-7 bg-white text-black">
       <Image
@@ -53,7 +84,7 @@ const ProductItemDetail = ({ product }) => {
               </h2>
             </div>
           </div>
-          <Button className="flex gap-3 ">
+          <Button className="flex gap-3 " onClick={() => addToCart()}>
             <ShoppingBasket />
             Add to Cart
           </Button>

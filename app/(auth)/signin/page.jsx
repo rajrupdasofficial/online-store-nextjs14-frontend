@@ -5,15 +5,18 @@ import GlobalApi from "@/utils/GlobalApi";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { toast } from "sonner";
+
 
 const SigninPage = () => {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const router = useRouter();
+
+
   useEffect(() => {
-    const intercom_auth = sessionStorage.getItem("intercom_auth");
+    const intercom_auth = localStorage.getItem("auth")
     if (intercom_auth) {
       router.push("/");
     }
@@ -22,14 +25,13 @@ const SigninPage = () => {
   const onSignIn = () => {
     GlobalApi.SignIn(email, password).then(
       (resp) => {
-        sessionStorage.setItem("intercom_user", JSON.stringify(resp.data.user));
-        sessionStorage.setItem("intercom_auth", resp.data.jwt);
-        localStorage.setItem("intercom_auth", resp.data.jwt);
+        localStorage.setItem("auth", resp.data.jwt);
         toast("Welcome back again");
         router.push("/");
       },
       (e) => {
-        console.log("Something went wrong at backend please try later", e);
+        toast(e?.response?.data?.error?.message);
+        setLoader(false);
       }
     );
   };
@@ -55,7 +57,7 @@ const SigninPage = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
             <Button disabled={!password} onClick={() => onSignIn()}>
-              Signin
+              Sign In
             </Button>
 
             <p>

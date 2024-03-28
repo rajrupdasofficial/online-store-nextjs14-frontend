@@ -15,17 +15,17 @@ const RegisterPage = () => {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const router = useRouter();
+
+
   const onCreateAccount = () => {
     GlobalApi.registerUser(username, email, password).then(
       (resp) => {
-        sessionStorage.setItem("intercom_user", JSON.stringify(resp.data.user));
-        sessionStorage.setItem("intercom_auth", resp.data.jwt);
-        localStorage.setItem("intercom_auth", resp.data.jwt);
+        localStorage.setItem("auth", resp.data.jwt);
         toast("Account created successfully");
         router.push("/signin");
       },
       (e) => {
-        toast("error while creating account");
+        toast(e?.response?.data?.error?.message);
       }
     );
   };

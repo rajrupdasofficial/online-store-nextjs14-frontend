@@ -23,6 +23,7 @@ import { useRouter } from "next/navigation";
 import { UpdateCartContext } from "@/context/UpdateCartcontext";
 import {
   Sheet,
+  SheetClose,
   SheetContent,
   SheetDescription,
   SheetHeader,
@@ -30,6 +31,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import CartItemList from "./CartItemList";
+import { toast } from "sonner";
 
 // logics
 const Header = () => {
@@ -41,6 +43,7 @@ const Header = () => {
   const router = useRouter();
   const { updateCart, setUpdateCart } = useContext(UpdateCartContext);
   const [cartItemList, setCartItemList] = useState([]);
+  const [subtotal, setSubTotal] = useState();
   useEffect(() => {
     getCategoryList();
 
@@ -81,6 +84,20 @@ const Header = () => {
     getCartItems();
   }, [getCartItems]);
 
+  const onDeleteItem = (id) => {
+    GlobalApi.deleteCartItem(id, jwt).then((resp) => {
+      toast("Item removed");
+      getCartItems();
+    });
+  };
+
+  useEffect(() => {
+    let total = 0;
+    cartItemList.forEach((element) => {
+      total = total + element.amount;
+    });
+    setSubTotal(total.toFixed(2));
+  }, [cartItemList]);
   return (
     <div className="p-5 shadow-md flex justify-between">
       <div className="flex items-center gap-8">
@@ -147,9 +164,23 @@ const Header = () => {
                 My Cart
               </SheetTitle>
               <SheetDescription>
-                <CartItemList cartitemlist={cartItemList} />
+                <CartItemList
+                  cartitemlist={cartItemList}
+                  onDeleteItem={onDeleteItem}
+                />
               </SheetDescription>
             </SheetHeader>
+            <SheetClose asChild>
+              <div className="flex justify-between items-center mt-6">
+                <h2 className="font-bold text-2xl">
+                  Subtotal <span>$ {subtotal}</span>
+                </h2>
+                <Button
+                  onClick={() => router.push(jwt ? "/checkout" : "/signin")}>
+                  Checkout
+                </Button>
+              </div>
+            </SheetClose>
           </SheetContent>
         </Sheet>
 

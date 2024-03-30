@@ -96,7 +96,7 @@ const ProductItemDetail = ({ product }) => {
           </div>
           <Button
             className="flex gap-3 "
-            onClick={() => addToCart()}
+            onClick={() => (jwt ? addToCart() : router.push("/signin"))}
             disabled={loading}>
             <ShoppingBasket />
             {loading ? <LoaderIcon className="animate-spin" /> : " Add to Cart"}

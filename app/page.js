@@ -8,7 +8,7 @@ import Footer from "./_components/Footer";
 
 export const metadata = {
   title: "Ecommerce Application",
-  description: "Ecommerce application",
+  description: "Ecommerce application for production",
 };
 
 export default async function Home() {

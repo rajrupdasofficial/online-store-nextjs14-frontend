@@ -12,7 +12,6 @@ const ProductItemDetail = ({ product }) => {
   const jwt = localStorage.getItem("auth");
   const user = JSON.parse(localStorage.getItem("user"));
   const { updateCart, setUpdateCart } = useContext(UpdateCartContext);
-
   const [productTotalPrice, setproductTotalPrice] = useState(
     product.attributes.sellingPrice
       ? product.attributes.sellingPrice
@@ -27,6 +26,7 @@ const ProductItemDetail = ({ product }) => {
     if (!jwt) {
       router.push("/");
       setLoading(false);
+
       return;
     }
     const data = {
@@ -36,6 +36,7 @@ const ProductItemDetail = ({ product }) => {
         products: product.id,
         users_permissions_users: user.id,
         userId: user.id,
+
       },
     };
     GlobalApi.addToCart(data, jwt).then(
@@ -48,6 +49,7 @@ const ProductItemDetail = ({ product }) => {
       (e) => {
         toast("Something went wrong at backend try later");
         setLoading(false);
+
       }
     );
   };
@@ -100,6 +102,7 @@ const ProductItemDetail = ({ product }) => {
             disabled={loading}>
             <ShoppingBasket />
             {loading ? <LoaderIcon className="animate-spin" /> : " Add to Cart"}
+
           </Button>
         </div>
         <h2>

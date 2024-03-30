@@ -5,6 +5,7 @@ import Header from "./_components/Header";
 import { Toaster } from "@/components/ui/sonner";
 import { UpdateCartContext } from "@/context/UpdateCartcontext";
 import { useState } from "react";
+
 const outfit = Outfit({ subsets: ["latin"] });
 
 export default function RootLayout({ children }) {

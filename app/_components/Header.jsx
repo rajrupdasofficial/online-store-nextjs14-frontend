@@ -6,6 +6,7 @@ import {
   ShoppingBasket,
   CircleUserRound,
 } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -33,6 +34,7 @@ import {
 import CartItemList from "./CartItemList";
 import { toast } from "sonner";
 
+
 // logics
 const Header = () => {
   const [categoryList, setCategoryList] = useState([]);
@@ -55,11 +57,13 @@ const Header = () => {
     if (jwts) {
       setJwt(jwts);
     }
+
     const auth = localStorage.getItem("auth");
     if (auth) {
       setonLogin(true);
     }
   }, [updateCart]);
+
   const getCategoryList = () => {
     GlobalApi.getCategory().then((resp) => {
       setCategoryList(resp.data.data);
@@ -98,6 +102,7 @@ const Header = () => {
     });
     setSubTotal(total.toFixed(2));
   }, [cartItemList]);
+
   return (
     <div className="p-5 shadow-md flex justify-between">
       <div className="flex items-center gap-8">

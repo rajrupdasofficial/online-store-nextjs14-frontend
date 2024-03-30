@@ -74,6 +74,7 @@ const deleteCartItem = (id, jwt) =>
       Authorization: "Bearer " + jwt,
     },
   });
+
 export default {
   getCategory,
   getSliders,

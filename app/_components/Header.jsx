@@ -1,6 +1,12 @@
 "use client";
 import Image from "next/image";
-import { LayoutGrid, Search, ShoppingBag, CircleUserRound } from "lucide-react";
+import {
+  LayoutGrid,
+  Search,
+  ShoppingBasket,
+  CircleUserRound,
+} from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -11,25 +17,53 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import GlobalApi from "@/utils/GlobalApi";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useContext } from "react";
 import Link from "next/link";
 import { search } from "@/lib/search";
 import { useRouter } from "next/navigation";
+import { UpdateCartContext } from "@/context/UpdateCartcontext";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import CartItemList from "./CartItemList";
+import { toast } from "sonner";
+
 
 // logics
 const Header = () => {
   const [categoryList, setCategoryList] = useState([]);
   const [onLogin, setonLogin] = useState(false);
-
+  const [totalCartItem, setTotalCartItem] = useState(0);
+  const [userid, setUserid] = useState();
+  const [jwt, setJwt] = useState();
   const router = useRouter();
+  const { updateCart, setUpdateCart } = useContext(UpdateCartContext);
+  const [cartItemList, setCartItemList] = useState([]);
+  const [subtotal, setSubTotal] = useState();
   useEffect(() => {
     getCategoryList();
+
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user) {
+      setUserid(user);
+    }
+    const jwts = localStorage.getItem("auth");
+    if (jwts) {
+      setJwt(jwts);
+    }
 
     const auth = localStorage.getItem("auth");
     if (auth) {
       setonLogin(true);
     }
-  }, []);
+  }, [updateCart]);
+
   const getCategoryList = () => {
     GlobalApi.getCategory().then((resp) => {
       setCategoryList(resp.data.data);
@@ -40,6 +74,34 @@ const Header = () => {
     localStorage.clear();
     router.push("/signin");
   };
+
+  //Use to get total cart item
+  const getCartItems = useCallback(async () => {
+    if (userid && userid.id && jwt) {
+      const cartItemList_ = await GlobalApi.getCartItems(userid.id, jwt);
+      console.log(cartItemList_);
+      setTotalCartItem(cartItemList_?.length);
+      setCartItemList(cartItemList_);
+    }
+  }, [userid, jwt]);
+  useEffect(() => {
+    getCartItems();
+  }, [getCartItems]);
+
+  const onDeleteItem = (id) => {
+    GlobalApi.deleteCartItem(id, jwt).then((resp) => {
+      toast("Item removed");
+      getCartItems();
+    });
+  };
+
+  useEffect(() => {
+    let total = 0;
+    cartItemList.forEach((element) => {
+      total = total + element.amount;
+    });
+    setSubTotal(total.toFixed(2));
+  }, [cartItemList]);
 
   return (
     <div className="p-5 shadow-md flex justify-between">
@@ -92,9 +154,41 @@ const Header = () => {
         </div>
       </div>
       <div className="flex gap-5 items-center">
-        <h2 className="flex gap-2 items-center text-lg">
-          <ShoppingBag />0
-        </h2>
+        <Sheet>
+          <SheetTrigger>
+            <h2 className="flex gap-2 items-center text-lg">
+              <ShoppingBasket className="h-7 w-7" />
+              <span className="bg-primary text-white  px-2 rounded-full">
+                {totalCartItem}
+              </span>
+            </h2>
+          </SheetTrigger>
+          <SheetContent side="bottom">
+            <SheetHeader>
+              <SheetTitle className="bg-blue-600 text-white font-bold text-lg p-4">
+                My Cart
+              </SheetTitle>
+              <SheetDescription>
+                <CartItemList
+                  cartitemlist={cartItemList}
+                  onDeleteItem={onDeleteItem}
+                />
+              </SheetDescription>
+            </SheetHeader>
+            <SheetClose asChild>
+              <div className="flex justify-between items-center mt-6">
+                <h2 className="font-bold text-2xl">
+                  Subtotal <span>$ {subtotal}</span>
+                </h2>
+                <Button
+                  onClick={() => router.push(jwt ? "/checkout" : "/signin")}>
+                  Checkout
+                </Button>
+              </div>
+            </SheetClose>
+          </SheetContent>
+        </Sheet>
+
         {!onLogin ? (
           <Link href="/signin">
             <Button>Login</Button>

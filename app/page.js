@@ -6,10 +6,10 @@ import ProductList from "./_components/ProductList";
 import Image from "next/image";
 import Footer from "./_components/Footer";
 
+export const revalidate = 3600;
 export const metadata = {
   title: "Ecommerce Application",
   description: "Ecommerce application for production",
-
 };
 
 export default async function Home() {

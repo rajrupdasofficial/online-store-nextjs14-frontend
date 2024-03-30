@@ -11,6 +11,7 @@ const axiosClient = axios.create({
   headers: {
     "Cache-Control": "no-cache",
   },
+
 });
 
 const getCategory = () => axiosClient.get("/categories?populate=*");

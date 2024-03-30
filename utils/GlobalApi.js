@@ -8,12 +8,6 @@ const baseurl =
 
 const axiosClient = axios.create({
   baseURL: baseurl,
-  headers: {
-    "Cache-Control": "no-cache",
-    Pragma: "no-cache",
-    Expires: "0",
-  },
-
 });
 
 const getCategory = () => axiosClient.get("/categories?populate=*");

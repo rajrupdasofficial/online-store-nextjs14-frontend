@@ -1,7 +1,13 @@
 const { default: axios } = require("axios");
 
+const devurl = "http://localhost:1337/api";
+const baseurl =
+  process.env.NEXT_PUBLIC_STATUS === ""
+    ? devurl
+    : process.env.NEXT_PUBLIC_BACKED_URL;
+
 const axiosClient = axios.create({
-  baseURL: "http://localhost:1337/api",
+  baseURL: baseurl,
 });
 
 const getCategory = () => axiosClient.get("/categories?populate=*");
